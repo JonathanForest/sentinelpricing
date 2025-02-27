@@ -68,9 +68,8 @@ class RatingFile:
             )
 
         if self.mode == "b":
-            kwargs = {}
             self._file = importlib.resources.open_binary(
-                self.package, "data", self.name, **kwargs
+                self.package, "data", self.name
             )
 
         if self._file is None:
