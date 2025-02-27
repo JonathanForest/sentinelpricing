@@ -1,6 +1,7 @@
 # Sentinel Rating Framework
 
-Sentinel is a simple framework for insurance related pricing.
+Sentinel is a simple framework for insurance related pricing. Sentinel allows you to write your insurance product frameworks in pure Python. No additional
+packages or modules required.
 
 ```python3
 # Standard Library Imports
@@ -46,9 +47,6 @@ motor.quote(
 	{"age": 34, "lic": 7}
 )
 ```
-
-Sentinel allows you to write your insurance product frameworks in pure Python. No additional
-packages or modules required.
 
 With a few lines of code, you are ready to use Sentinel to start building pricing engines for
 analysis, or rating engines ready for deployment. Python is the most popular language in the world
