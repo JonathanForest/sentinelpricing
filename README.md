@@ -11,21 +11,21 @@ import csv
 from sentinel import Framework
 
 class Motor(Framework):
-	"""A Fake Motor Insurance Product...
+    """A Fake Motor Insurance Product...
 	
-	...with very simple pricing.
-	"""
+        ...with very simple pricing.
+    """
 
-	def load_rating_file(self, path):
-		with RatingFile(__package__, path) as f:
-            reader = csv.DictReader(f)
-            table = LookupTable(reader, name=path)
+    def load_rating_file(self, path):
+        with open(path) as f:
+	    reader = csv.DictReader(f)
+	    table = LookupTable(reader, name=path)
         return table
 
     def set_up(self):
     	"""Load rating tables into the framework"""
-		self.age = load_rating_file("age_rates.csv")        
-		self.lic = load_rating_file("lic_rates.csv")
+        self.age = load_rating_file("age_rates.csv")        
+	self.lic = load_rating_file("lic_rates.csv")
 
     def calculation(self, quote):
         """Quote Calculation"""
@@ -41,9 +41,7 @@ class Motor(Framework):
         # Return the finished quote
         return quote
 
-motor = Motor()
-
-motor.quote(
+Motor.quote(
 	{"age": 34, "lic": 7}
 )
 ```
