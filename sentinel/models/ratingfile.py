@@ -16,6 +16,7 @@ class RatingFile:
         name: The name of the resource file.
         mode: The file mode ("t" for text or "b" for binary).
     """
+
     def __init__(self, package: Any, name: str, mode: str = "text") -> None:
         """
         Initialize the RatingFile context manager.
