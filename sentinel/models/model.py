@@ -1,5 +1,6 @@
 import importlib.resources
 import pickle
+import os
 
 from typing import IO, Any, Optional
 
@@ -56,7 +57,7 @@ class Model:
         # Note: The second argument "data" is assumed to be a subpackage or
         # directory within the given package where the resource is stored.
         self._file = importlib.resources.open_binary(
-            self.package, "data", self.name
+            self.package, os.path.join("data", self.name)
         )
         return pickle.load(self._file)
 

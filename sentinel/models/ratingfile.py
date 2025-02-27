@@ -1,4 +1,5 @@
 import importlib.resources
+import os
 from typing import IO, Any, Optional
 
 
@@ -15,12 +16,6 @@ class RatingFile:
         name: The name of the resource file.
         mode: The file mode ("t" for text or "b" for binary).
     """
-
-    _OPEN_FUNCTIONS = {
-        "b": importlib.resources.open_binary,
-        "t": importlib.resources.open_text,
-    }
-
     def __init__(self, package: Any, name: str, mode: str = "text") -> None:
         """
         Initialize the RatingFile context manager.
@@ -69,7 +64,7 @@ class RatingFile:
 
         if self.mode == "b":
             self._file = importlib.resources.open_binary(
-                self.package, "data", self.name
+                self.package, os.path.join("data", self.name)
             )
 
         if self._file is None:
