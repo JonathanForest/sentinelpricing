@@ -17,11 +17,11 @@ class Framework(abc.ABC):
     Derived classes should implement the `setup` and `calculation` methods to
     configure the framework and perform quote calculations, respectively.
 
-    Frameworks are intended to be singletons, meaning that multiple
-    instantiations of the same framework should yield the same underlying
-    instance. In addition, set up methods from parent classes are inherited and
-    executed in order during instantiation. This allows frameworks to build on
-    one another without overriding crucial initialization steps.
+    Frameworks are never intended to be initialised by the end user. You should
+    be calling the class methods 'quote' and 'quote_many'. In addition, set up
+    methods from parent classes are inherited and executed in order during
+    instantiation. This allows frameworks to build on one another without
+    overriding crucial initialization steps.
 
     Example:
         class YourFramework(Framework):
