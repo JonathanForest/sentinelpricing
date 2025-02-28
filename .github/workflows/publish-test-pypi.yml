@@ -57,6 +57,7 @@ jobs:
 
       - name: Rename distributions
         run: |
+          cd dist/
           for file in sentinel*; do
             # Check if the file exists and is a regular file
             if [ -f "$file" ]; then
@@ -66,6 +67,7 @@ jobs:
               mv "$file" "$newfile"
             fi
           done
+          cd ..
 
       - name: Publish to Test PyPI
         run: twine upload --verbose --repository testpypi dist/*
