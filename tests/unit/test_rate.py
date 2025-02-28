@@ -1,4 +1,4 @@
-from sentinel.models.rate import Rate
+from sentinelpricing import Rate
 
 
 def test_rate_equality():

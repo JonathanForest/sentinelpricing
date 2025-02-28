@@ -1,7 +1,6 @@
 import unittest
 
-from sentinel.models.lookuptable import LookupTable
-from sentinel.models.rate import Rate
+from sentinelpricing import LookupTable, Rate
 
 
 def test_lookuptable_init():

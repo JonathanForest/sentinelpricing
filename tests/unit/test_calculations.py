@@ -1,4 +1,4 @@
-from sentinel.utils.calculations import dict_difference, dict_transpose
+from sentinelpricing.utils.calculations import dict_difference, dict_transpose
 
 
 def test_dict_subtract():

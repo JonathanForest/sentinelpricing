@@ -8,7 +8,7 @@ packages or modules required.
 import csv
 
 # Sentinel Imports
-from sentinel import Framework
+from sentinelpricing import Framework
 
 class Motor(Framework):
     """A Fake Motor Insurance Product...

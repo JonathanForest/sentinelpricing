@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [build-editable]
@@ -24,7 +24,7 @@ classifiers = [
         "Operating System :: OS Independent"]
 
 [tool.setuptools.packages.find]
-include = ["sentinel", "sentinel.*"]
+include = ["sentinelpricing", "sentinelpricing.*"]
 
 [project.optional-dependencies]
 dev = ["black", "flake8", "pytest", "mypy"]

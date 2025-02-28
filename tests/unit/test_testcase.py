@@ -1,4 +1,4 @@
-from sentinel import Framework, TestCase
+from sentinelpricing import Framework, TestCase
 
 
 def test_testcase_quote():

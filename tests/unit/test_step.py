@@ -1,6 +1,6 @@
 import operator
 
-from sentinel import Step
+from sentinelpricing import Step
 
 
 def test_step_init():

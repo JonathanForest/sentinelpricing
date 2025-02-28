@@ -1,7 +1,6 @@
 import unittest
 
-from sentinel.models.breakdown import Breakdown
-from sentinel.models.step import Step
+from sentinelpricing import Breakdown, Step
 
 
 def test_init_breakdown():

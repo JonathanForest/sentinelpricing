@@ -1,5 +1,4 @@
-from sentinel.models.framework import Framework
-from sentinel.models.quote import Quote
+from sentinelpricing import Framework, Quote
 
 
 def test_multiple_inheritance():

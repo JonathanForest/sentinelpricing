@@ -1,7 +1,7 @@
 import uuid
 from operator import add, sub, mul, truediv
 
-from sentinel import Quote, Rate, Note, TestCase
+from sentinelpricing import Quote, Rate, Note, TestCase
 
 
 def test_init_with_dict():

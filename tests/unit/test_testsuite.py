@@ -1,5 +1,4 @@
-from sentinel import TestCase
-from sentinel import TestSuite
+from sentinelpricing import TestCase, TestSuite
 
 
 def test_testsuite_init():

@@ -1,5 +1,4 @@
-from sentinel import Quote
-from sentinel import QuoteSet
+from sentinelpricing import Quote, QuoteSet
 
 
 def test_quoteset_init():

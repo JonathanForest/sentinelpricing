@@ -7,7 +7,7 @@ setup(
     author="Jonathan Pennell",
     author_email="jonathan@forestandrock.co.uk",
     description="Sentinel Pricing Framework",
-    packages=["sentinel"],
+    packages=["sentinelpricing"],
     url="https://github.com/JonathanForest/sentinelpricing",
     classifiers=[
         "Programming Language :: Python :: 3",
