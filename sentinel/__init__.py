@@ -1,14 +1,14 @@
-from sentinel.models import Breakdown
-from sentinel.models import Framework
-from sentinel.models import LookupTable
-from sentinel.models import Note
-from sentinel.models import Quote
-from sentinel.models import QuoteSet
-from sentinel.models import Rate
-from sentinel.models import RatingFile
-from sentinel.models import Step
-from sentinel.models import TestCase
-from sentinel.models import TestSuite
+from .models import Breakdown
+from .models import Framework
+from .models import LookupTable
+from .models import Note
+from .models import Quote
+from .models import QuoteSet
+from .models import Rate
+from .models import RatingFile
+from .models import Step
+from .models import TestCase
+from .models import TestSuite
 
 __all__ = [
     "Breakdown",
