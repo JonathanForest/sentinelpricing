@@ -1,9 +1,9 @@
-name: Test and Deploy to Test PyPI
+name: Test and Deploy to PyPI
 
 on:
   push:
     branches:
-      - testpypiupload
+      - main
   workflow_dispatch:
 
 jobs:
@@ -36,7 +36,7 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
-    environment: test
+    environment: prod
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout repository
