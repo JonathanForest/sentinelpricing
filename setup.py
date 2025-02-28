@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 setup(
-    name="sentinel",
+    name="sentinelpricing",
     version="0.1.0",
     author="Jonathan Pennell",
     author_email="jonathan@forestandrock.co.uk",
