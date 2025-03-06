@@ -1,8 +1,10 @@
 
+import math as m
 import random
 
 from itertools import chain
 
+import matplotlib.pyplot as plt
 
 from sentinelpricing import Framework, LookupTable, TestSuite, TestCase
 
@@ -20,13 +22,13 @@ age_rates = [
 ]
 
 lic_rates = [
-	{"lic": l, "rate": 1 - (l * 0.2)}
+	{"lic": l, "rate": max(1 - (l * 0.2), 0.8)}
 	for l in range(0,8)
 ]
 
 proposed_age_rates = [
-	{"age": a, "rate": 1.3 * max((17/a),0.8)}
-	for a in chain([17,], range(20, 80, 15))
+	{"age": a, "rate": 1.4 * max((17/a),0.75)}
+	for a in chain([17,], range(20, 80, 1))
 ]
 
 
@@ -64,5 +66,20 @@ class MotorV2(MotorV1):
 current = MotorV1.quote_many(testcases)
 proposed = MotorV2.quote_many(testcases)
 
-print("Current:", current.avg(by="age"))
-print("Proposed:", proposed.avg(by="age"))
+avg_final_price_by_age = current.avg(
+	by="age", bins=lambda x: m.floor(x / 10) * 10
+)
+
+proposed_avg_final_price_by_age = proposed.avg(
+	by="age", bins=lambda x: m.floor(x / 10) * 10
+)
+
+for key in avg_final_price_by_age.keys():
+	print(key, round(avg_final_price_by_age[key],2), ">>", round(proposed_avg_final_price_by_age[key],2))
+
+fig, ax = plt.subplots()
+
+ax.plot(avg_final_price_by_age.keys(), avg_final_price_by_age.values())
+ax.plot(proposed_avg_final_price_by_age.keys(), proposed_avg_final_price_by_age.values())
+
+plt.show()
