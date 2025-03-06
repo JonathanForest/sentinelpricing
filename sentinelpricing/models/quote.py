@@ -58,7 +58,7 @@ class Quote:
                 quote. If not provided, a new UUID will be generated.
         """
         self.identifier = identifier or uuid.uuid4()
-        self.framework = framework
+        self.framework = framework or "Unnamed Framework"
 
         if isinstance(testcase, TestCase):
             self.quotedata = testcase.data
@@ -81,7 +81,11 @@ class Quote:
         Returns:
             str: A string representation of the quote.
         """
-        return f"{self.__class__.__name__}-{self.identifier}"
+        return "{}::{}::{}".format(
+            self.__class__.__name__,
+            self.identifier,
+            repr(self.framework)
+        )
 
     def __getitem__(self, key: Hashable) -> Any:
         """

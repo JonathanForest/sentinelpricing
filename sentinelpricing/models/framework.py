@@ -86,7 +86,7 @@ class Framework(abc.ABC):
         Returns:
             A string representation, typically the framework's name.
         """
-        return self.name if self.name is not None else self.__class__.__name__
+        return self.name or self.__class__.__name__
 
     def __repr__(self) -> str:
         """
@@ -95,7 +95,7 @@ class Framework(abc.ABC):
         Returns:
             A string representation, typically the framework's name.
         """
-        return self.__str__()
+        return str(self)
 
     def _run_inherited_setup_methods(self) -> None:
         """
