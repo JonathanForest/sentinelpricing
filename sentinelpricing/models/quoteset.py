@@ -110,6 +110,7 @@ class QuoteSet:
         self,
         quotes: Union[None, List[Quote]] = None,
         by: Optional[Union[Any, Iterable[Any]]] = None,
+        bins: Optional[Callable[[Any], Any]] = None
     ) -> Dict[Any, List["Quote"]]:
         """
         Group quotes by a specified key or set of keys.
@@ -123,6 +124,10 @@ class QuoteSet:
             Dict[Any, List[Quote]]: A mapping from group key to list of Quote
                 objects.
         """
+
+        if not bins:
+            bins = lambda x: x
+
         _by: Any = (
             tuple(by)
             if isinstance(by, Iterable) and not isinstance(by, (str, bytes))
@@ -131,7 +136,7 @@ class QuoteSet:
         groups: Dict[Any, List["Quote"]] = {}
         iterable = quotes or self.quotes
         for q in iterable:
-            key: Any = q[_by]
+            key: Any = bins(q[_by])
             groups.setdefault(key, []).append(q)
         return groups
 
@@ -139,6 +144,7 @@ class QuoteSet:
         self,
         func: Callable[[Iterable[Any]], Any],
         by: Optional[Union[Any, Iterable[Any]]] = None,
+        bins: Optional[Callable[[Any], Any]] = None,
         on: Optional[str] = None,
         where: Optional[Callable[["Quote"], bool]] = None,
         sort_keys: bool = True,
@@ -147,10 +153,11 @@ class QuoteSet:
         Apply an aggregation function to the quotes or to groups of quotes.
 
         Args:
-             func (Callable): A function that aggregates a list of numeric
+            func (Callable): A function that aggregates a list of numeric
                 values (e.g., mean, max).
-             by (Any or Iterable[Any], optional): Key(s) to group quotes before
+            by (Any or Iterable[Any], optional): Key(s) to group quotes before
                 applying the function.
+            bin (Callable): A function that groups the by field.
             on (str, optional): The attribute name to extract from each Quote
                 (defaults to "final_price").
             slice_filter (Callable, optional): A function to filter quotes
@@ -174,7 +181,7 @@ class QuoteSet:
             values = [getattr(q, attribute) for q in filtered_quotes]
             return func(values)
 
-        grouped_data = self._groupby(quotes=filtered_quotes, by=by)
+        grouped_data = self._groupby(quotes=filtered_quotes, by=by, bins=bins)
         prelim: Dict[Any, List[Any]] = {
             key: [getattr(q, attribute) for q in quotes]
             for key, quotes in grouped_data.items()
