@@ -41,6 +41,7 @@ class Motor(Framework):
         # Return the finished quote
         return quote
 
+# Returns a Quote object from the Motor Framework.
 Motor.quote(
 	{"age": 34, "lic": 7}
 )
