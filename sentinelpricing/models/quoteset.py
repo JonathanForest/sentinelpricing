@@ -109,8 +109,7 @@ class QuoteSet:
     def _groupby(
         self,
         quotes: Union[None, List[Quote]] = None,
-        by: Optional[Union[Any, Iterable[Any]]] = None,
-        bins: Optional[Callable[[Any], Any]] = None
+        by: Optional[Union[Any, Callable[[Quote], Any]]] = None,
     ) -> Dict[Any, List["Quote"]]:
         """
         Group quotes by a specified key or set of keys.
@@ -125,18 +124,18 @@ class QuoteSet:
                 objects.
         """
 
-        if not bins:
-            bins = lambda x: x
+        _by: Union[Tuple[Any,...], Callable, str]
+        if callable(by):
+            _by = by
+        elif isinstance(by, Iterable) and not isinstance(by, (str)):
+            _by = tuple(by)
+        else:
+            _by = by
 
-        _by: Any = (
-            tuple(by)
-            if isinstance(by, Iterable) and not isinstance(by, (str, bytes))
-            else by
-        )
         groups: Dict[Any, List["Quote"]] = {}
         iterable = quotes or self.quotes
         for q in iterable:
-            key: Any = bins(q[_by])
+            key: Any = _by(q) if callable(_by) else q[_by]
             groups.setdefault(key, []).append(q)
         return groups
 
@@ -144,7 +143,6 @@ class QuoteSet:
         self,
         func: Callable[[Iterable[Any]], Any],
         by: Optional[Union[Any, Iterable[Any]]] = None,
-        bins: Optional[Callable[[Any], Any]] = None,
         on: Optional[str] = None,
         where: Optional[Callable[["Quote"], bool]] = None,
         sort_keys: bool = True,
@@ -181,7 +179,7 @@ class QuoteSet:
             values = [getattr(q, attribute) for q in filtered_quotes]
             return func(values)
 
-        grouped_data = self._groupby(quotes=filtered_quotes, by=by, bins=bins)
+        grouped_data = self._groupby(quotes=filtered_quotes, by=by)
         prelim: Dict[Any, List[Any]] = {
             key: [getattr(q, attribute) for q in quotes]
             for key, quotes in grouped_data.items()
@@ -197,9 +195,8 @@ class QuoteSet:
         Compute the average of a specified attribute across quotes.
 
         Args:
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                applying the function.
-            bin (Callable): A function that groups the by field.
+            by (Any or Iterable[Any], optional): Key(s) or Callable to group
+                quotes by.
             on (str, optional): The attribute name to extract from each Quote
                 (defaults to "final_price").
             where (Callable, optional): A function to filter quotes
@@ -219,9 +216,8 @@ class QuoteSet:
         Compute the maximum of a specified attribute across quotes.
 
         Args:
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                applying the function.
-            bin (Callable): A function that groups the by field.
+            by (Any or Iterable[Any],Key(s) or Callable to group
+                quotes by.
             on (str, optional): The attribute name to extract from each Quote
                 (defaults to "final_price").
             where (Callable, optional): A function to filter quotes
@@ -241,9 +237,8 @@ class QuoteSet:
         Compute the minimum of a specified attribute across quotes.
 
         Args:
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                applying the function.
-            bin (Callable): A function that groups the by field.
+            by (Any or Iterable[Any], optional): Key(s) or Callable to group
+                quotes by.
             on (str, optional): The attribute name to extract from each Quote
                 (defaults to "final_price").
             where (Callable, optional): A function to filter quotes
@@ -263,9 +258,8 @@ class QuoteSet:
         Compute the sum of a specified attribute across quotes.
 
         Args:
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                applying the function.
-            bin (Callable): A function that groups the by field.
+            by (Any or Iterable[Any], optional): Key(s) or Callable to group
+                quotes by.
             on (str, optional): The attribute name to extract from each Quote
                 (defaults to "final_price").
             where (Callable, optional): A function to filter quotes
@@ -292,9 +286,8 @@ class QuoteSet:
         Args:
             func (Callable): A function that aggregates a list of values.
             *args: Additional positional arguments for the function.
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                applying the function.
-            bin (Callable): A function that groups the by field.
+            by (Any or Iterable[Any], optional): Key(s) or Callable to group
+                quotes by.
             on (str, optional): The attribute name to extract from each Quote
                 (defaults to "final_price").
             where (Callable, optional): A function to filter quotes
