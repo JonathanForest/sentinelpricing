@@ -1,6 +1,7 @@
 import abc
 from typing import Any, List, Callable, Union
 
+from .pricetest import PriceTest
 from .quote import Quote
 from .quoteset import QuoteSet
 from .lookuptable import LookupTable
@@ -192,13 +193,20 @@ class Framework(abc.ABC):
             A Quoteset containing the calculated quotes.
         """
         instance = cls()
-        return QuoteSet(
+        quote_set = QuoteSet(
             [
                 instance._calculate_wrapper(test, *args, **kwargs)
                 for test in tests
             ],
             framework=cls,
         )
+
+        for k in instance.__dict__:
+            v = instance.__dict__[k]
+            if isinstance(v, PriceTest):
+                quote_set.price_test = v
+
+        return quote_set
 
     @classmethod
     def quote(cls, test: Any, *args: Any, **kwargs: Any) -> Any:
