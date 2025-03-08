@@ -364,6 +364,16 @@ class Quote:
     def get(self, *args, **kwargs):
         return self.quotedata.get(*args, **kwargs)
 
+    def override(self, /, final_price, message=None):
+
+        overriding_step = Step(
+            f"OVERRIDE - {message}",
+            "assignment",
+            final_price,
+            final_price
+        )
+        self.breakdown.append(overriding_step)
+
     @property
     def calculated(self) -> bool:
         """
