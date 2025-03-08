@@ -2,6 +2,7 @@ from .models import Breakdown
 from .models import Framework
 from .models import LookupTable
 from .models import Note
+from .models import PriceTest
 from .models import Quote
 from .models import QuoteSet
 from .models import Rate
@@ -15,6 +16,7 @@ __all__ = [
     "Framework",
     "LookupTable",
     "Note",
+    "PriceTest",
     "Quote",
     "QuoteSet",
     "Rate",
