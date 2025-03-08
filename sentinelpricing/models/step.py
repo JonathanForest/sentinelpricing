@@ -12,6 +12,11 @@ class Step:
         self.other = other
         self.result = result
 
+    @classmethod
+    def headers(cls):
+        return f"{'Total': <8} :: {"Name":<72}" + \
+        f" - {"Operation": <30} - {"Other"}"
+
     def __repr__(self):
-        return f"{self.result: <7} :: {self.name:<30}"
+        return f"{round(self.result, 5): <9} :: {self.name:<72}" + \
         f" - {repr(self.oper): <30} - {self.other}"
