@@ -201,8 +201,7 @@ class Framework(abc.ABC):
             framework=cls,
         )
 
-        for k in instance.__dict__:
-            v = instance.__dict__[k]
+        for v in instance.__dict__.values():
             if isinstance(v, PriceTest):
                 quote_set.price_test = v
 
