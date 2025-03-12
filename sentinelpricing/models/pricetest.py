@@ -44,6 +44,12 @@ class PriceTest:
     def __iter__(self):
         return iter(self.buckets)
 
+    def __contains__(self, v):
+        for s in self.buckets.values():
+            if v in s:
+                return True
+        return False
+
     def __getitem__(self, quote):
         return self.apply(quote)
 
@@ -67,6 +73,12 @@ class PriceTest:
                 return False
 
         return True
+
+    def get_bin(self, v):
+        return self.bin(v)
+
+    def get_bucket(self, v):
+        return self.buckets[self.bin(v)]
 
     def get_bin_function(self):
         buckets = len(self.buckets)
