@@ -58,7 +58,7 @@ class Quote:
                 quote. If not provided, a new UUID will be generated.
         """
         self.identifier = identifier or uuid.uuid4()
-        self.framework = framework
+        self.framework = framework or "Unnamed Framework"
 
         if isinstance(testcase, TestCase):
             self.quotedata = testcase.data
@@ -81,7 +81,11 @@ class Quote:
         Returns:
             str: A string representation of the quote.
         """
-        return f"{self.__class__.__name__}-{self.identifier}"
+        return "{}::{}::{}".format(
+            self.__class__.__name__,
+            self.identifier,
+            repr(self.framework)
+        )
 
     def __getitem__(self, key: Hashable) -> Any:
         """
@@ -359,6 +363,16 @@ class Quote:
 
     def get(self, *args, **kwargs):
         return self.quotedata.get(*args, **kwargs)
+
+    def override(self, /, final_price, message=None):
+
+        overriding_step = Step(
+            f"OVERRIDE - {message}",
+            "assignment",
+            final_price,
+            final_price
+        )
+        self.breakdown.append(overriding_step)
 
     @property
     def calculated(self) -> bool:

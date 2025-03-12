@@ -109,7 +109,7 @@ class QuoteSet:
     def _groupby(
         self,
         quotes: Union[None, List[Quote]] = None,
-        by: Optional[Union[Any, Iterable[Any]]] = None,
+        by: Optional[Union[Any, Callable[[Quote], Any]]] = None,
     ) -> Dict[Any, List["Quote"]]:
         """
         Group quotes by a specified key or set of keys.
@@ -123,15 +123,19 @@ class QuoteSet:
             Dict[Any, List[Quote]]: A mapping from group key to list of Quote
                 objects.
         """
-        _by: Any = (
-            tuple(by)
-            if isinstance(by, Iterable) and not isinstance(by, (str, bytes))
-            else by
-        )
+
+        _by: Union[Tuple[Any,...], Callable, str]
+        if callable(by):
+            _by = by
+        elif isinstance(by, Iterable) and not isinstance(by, (str)):
+            _by = tuple(by)
+        else:
+            _by = by
+
         groups: Dict[Any, List["Quote"]] = {}
         iterable = quotes or self.quotes
         for q in iterable:
-            key: Any = q[_by]
+            key: Any = _by(q) if callable(_by) else q[_by]
             groups.setdefault(key, []).append(q)
         return groups
 
@@ -147,15 +151,16 @@ class QuoteSet:
         Apply an aggregation function to the quotes or to groups of quotes.
 
         Args:
-             func (Callable): A function that aggregates a list of numeric
+            func (Callable): A function that aggregates a list of numeric
                 values (e.g., mean, max).
-             by (Any or Iterable[Any], optional): Key(s) to group quotes before
+            by (Any or Iterable[Any], optional): Key(s) to group quotes before
                 applying the function.
+            bin (Callable): A function that groups the by field.
             on (str, optional): The attribute name to extract from each Quote
                 (defaults to "final_price").
-            slice_filter (Callable, optional): A function to filter quotes
+            where (Callable, optional): A function to filter quotes
                 before aggregation.
-             sort_keys (bool): Whether to sort the grouping keys in the result.
+            sort_keys (bool): Whether to sort the grouping keys in the result.
 
         Returns:
             Union[Dict[Any, Any], Any]:
@@ -190,10 +195,13 @@ class QuoteSet:
         Compute the average of a specified attribute across quotes.
 
         Args:
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                averaging.
-            on (str, optional): The attribute to average (defaults to
-                "final_price").
+            by (Any or Iterable[Any], optional): Key(s) or Callable to group
+                quotes by.
+            on (str, optional): The attribute name to extract from each Quote
+                (defaults to "final_price").
+            where (Callable, optional): A function to filter quotes
+                before aggregation.
+            sort_keys (bool): Whether to sort the grouping keys in the result.
 
         Returns:
             Union[Dict[Any, float], float]:
@@ -208,10 +216,13 @@ class QuoteSet:
         Compute the maximum of a specified attribute across quotes.
 
         Args:
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                finding the maximum.
-            on (str, optional): The attribute to consider (defaults to
-                 "final_price").
+            by (Any or Iterable[Any],Key(s) or Callable to group
+                quotes by.
+            on (str, optional): The attribute name to extract from each Quote
+                (defaults to "final_price").
+            where (Callable, optional): A function to filter quotes
+                before aggregation.
+            sort_keys (bool): Whether to sort the grouping keys in the result.
 
         Returns:
             Union[Dict[Any, float], float]:
@@ -226,10 +237,13 @@ class QuoteSet:
         Compute the minimum of a specified attribute across quotes.
 
         Args:
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                finding the minimum.
-            on (str, optional): The attribute to consider (defaults to
-                "final_price").
+            by (Any or Iterable[Any], optional): Key(s) or Callable to group
+                quotes by.
+            on (str, optional): The attribute name to extract from each Quote
+                (defaults to "final_price").
+            where (Callable, optional): A function to filter quotes
+                before aggregation.
+            sort_keys (bool): Whether to sort the grouping keys in the result.
 
         Returns:
             Union[Dict[Any, float], float]:
@@ -244,10 +258,13 @@ class QuoteSet:
         Compute the sum of a specified attribute across quotes.
 
         Args:
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                summing.
-            on (str, optional): The attribute to sum (defaults to
-                "final_price").
+            by (Any or Iterable[Any], optional): Key(s) or Callable to group
+                quotes by.
+            on (str, optional): The attribute name to extract from each Quote
+                (defaults to "final_price").
+            where (Callable, optional): A function to filter quotes
+                before aggregation.
+            sort_keys (bool): Whether to sort the grouping keys in the result.
 
         Returns:
             Union[Dict[Any, float], float]:
@@ -269,11 +286,13 @@ class QuoteSet:
         Args:
             func (Callable): A function that aggregates a list of values.
             *args: Additional positional arguments for the function.
-            by (Any or Iterable[Any], optional): Key(s) to group quotes before
-                applying the function.
-            on (str, optional): The attribute on which to apply the function
+            by (Any or Iterable[Any], optional): Key(s) or Callable to group
+                quotes by.
+            on (str, optional): The attribute name to extract from each Quote
                 (defaults to "final_price").
-            **kwargs: Additional keyword arguments for the function.
+            where (Callable, optional): A function to filter quotes
+                before aggregation.
+            sort_keys (bool): Whether to sort the grouping keys in the result.
 
         Returns:
             Union[Dict[Any, Any], Any]:

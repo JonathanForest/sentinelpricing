@@ -1,6 +1,7 @@
 import abc
 from typing import Any, List, Callable, Union
 
+from .pricetest import PriceTest
 from .quote import Quote
 from .quoteset import QuoteSet
 from .lookuptable import LookupTable
@@ -86,7 +87,7 @@ class Framework(abc.ABC):
         Returns:
             A string representation, typically the framework's name.
         """
-        return self.name if self.name is not None else self.__class__.__name__
+        return self.name or self.__class__.__name__
 
     def __repr__(self) -> str:
         """
@@ -95,7 +96,7 @@ class Framework(abc.ABC):
         Returns:
             A string representation, typically the framework's name.
         """
-        return self.__str__()
+        return str(self)
 
     def _run_inherited_setup_methods(self) -> None:
         """
@@ -192,13 +193,19 @@ class Framework(abc.ABC):
             A Quoteset containing the calculated quotes.
         """
         instance = cls()
-        return QuoteSet(
+        quote_set = QuoteSet(
             [
                 instance._calculate_wrapper(test, *args, **kwargs)
                 for test in tests
             ],
             framework=cls,
         )
+
+        for v in instance.__dict__.values():
+            if isinstance(v, PriceTest):
+                quote_set.price_test = v
+
+        return quote_set
 
     @classmethod
     def quote(cls, test: Any, *args: Any, **kwargs: Any) -> Any:

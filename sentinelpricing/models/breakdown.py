@@ -105,7 +105,9 @@ class Breakdown:
         Returns: str: A newline-separated string representation of each
             recorded step.
         """
-        return "\n".join(repr(step) for step in self)
+        steps = list(self)
+        steps.insert(0, Step.headers())
+        return "\n".join(repr(step) for step in steps)
 
     def append(self, step: Union["Step", "Note"]) -> None:
         """Append a new step to the breakdown.

@@ -1,5 +1,6 @@
 from bisect import bisect_left
 from collections import namedtuple
+from functools import lru_cache
 from typing import List, Dict, Any, Optional, Tuple, Union
 
 from .rate import Rate
@@ -52,6 +53,7 @@ class LookupTable:
         data: List[Dict[str, Any]],
         rate_column: Optional[str] = None,
         name: Optional[str] = None,
+        cache: bool = True
     ) -> None:
         """
         Initialize a new instance of LookupTable.
@@ -64,6 +66,8 @@ class LookupTable:
                 corresponding to the rate value. Defaults to "rate" if not
                 provided.
             name (str, optional): A human-readable name for the lookup table.
+            cache (bool, optional): A bool enabling a lru cache over the
+                lookup method.
         """
         rate_column = rate_column or "rate"
         rates: List[float] = []
@@ -72,8 +76,8 @@ class LookupTable:
         # Process each row in the input data.
         for row in data:
             if rate_column not in row:
-                raise ValueError(
-                    f"Invalid or missing rate value in row: {row}"
+                raise KeyError(
+                    f"Invalid or missing rate key in row: {row}"
                 )
             rates.append(float(row[rate_column]))
 
@@ -121,6 +125,9 @@ class LookupTable:
         )
         self.index, self.rates = map(list, zip(*combined))
 
+        if cache:
+            self.lookup = lru_cache(self.lookup)
+
     def __len__(self):
         return len(self.index)
 
@@ -135,10 +142,10 @@ class LookupTable:
         Returns:
             Rate: The resulting rate wrapped in a Rate object.
         """
-        # Ensure the key is a tuple.
         if not isinstance(key, tuple):
             key = (key,)
         return self.lookup(*key)
+
 
     def lookup(self, *keys: Any) -> "Rate":
         """

@@ -20,6 +20,9 @@ class Bucket:
         self.count = 0
         self.values = set()
 
+    def __repr__(self):
+        return f"Bin: {self.bucket}, Count: {self.count}, Set: {self.values}"
+
     def put(self, val):
         self.values.add(val)
         self.count += 1
@@ -35,15 +38,29 @@ class PriceTest:
         self.num_buckets = len(ratetable)
         self.buckets = {i: Bucket(i) for i in range(self.num_buckets)}
 
-    def __repr__(self): ...
+        self.get = lambda q: by(q) if callable(by) else q[by]
+        self.bin = staticmethod(self.get_bin_function())
+
+    def __iter__(self):
+        return iter(self.buckets)
+
+    def __contains__(self, v):
+        for s in self.buckets.values():
+            if v in s:
+                return True
+        return False
+
+    def __getitem__(self, quote):
+        return self.apply(quote)
 
     def apply(self, quote):
         by = self.by
-        val = by(quote) if callable(by) else quote[by]
-        bucket = hash(val) % self.buckets
 
-        self.buckets[bucket]["values"].add(val)
-        self.buckets[bucket]["count"] += 1
+        val = self.get(quote)
+        bucket = self.bin(quote)
+
+        self.buckets[bucket].values.add(val)
+        self.buckets[bucket].count += 1
 
         return self.ratetable.lookup(bucket)
 
@@ -56,3 +73,19 @@ class PriceTest:
                 return False
 
         return True
+
+    def get_bin(self, v):
+        return self.bin(v)
+
+    def get_bucket(self, v):
+        return self.buckets[self.bin(v)]
+
+    def get_bin_function(self):
+        buckets = len(self.buckets)
+        by = self.by
+        def bin_func(q):
+            val = self.get(q)
+            bucket = hash(val) % buckets
+            return bucket
+
+        return bin_func
