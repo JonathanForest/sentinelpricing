@@ -1,9 +1,14 @@
+
+import hashlib
 import importlib.resources
 import os
+
+from abc import ABC, abstractmethod
+from functools import partialmethod
 from typing import IO, Any, Optional
 
 
-class RatingFile:
+class ModuleFile(ABC):
     """
     Context manager for opening a resource file from a package.
 
@@ -11,15 +16,25 @@ class RatingFile:
     importlib.resources. It supports opening the file in either text or
     binary mode, and is intended to be used with a "with" statement.
 
+    Strictly speaking this is only necessary when using Sentinel Frameworks
+    in modules that you intend to share, as it removes the need to know exactly
+    where the file is stored.
+
     Attributes:
         package: The package that contains the resource.
         name: The name of the resource file.
         mode: The file mode ("t" for text or "b" for binary).
     """
 
-    def __init__(self, package: Any, name: str, mode: str = "text") -> None:
+    def __init__(
+        self,
+        package: Any,
+        name: str,
+        mode: str = "text",
+        expected_md5: str = None
+        ) -> None:
         """
-        Initialize the RatingFile context manager.
+        Initialize the ModuleFile context manager.
 
         Args:
             package: The package where the resource file is located.
@@ -33,17 +48,10 @@ class RatingFile:
         self.package = package
         self.name = name
 
-        mode_lower = mode.lower()
-        if mode_lower in ("text", "t"):
-            self.mode = "t"
-        elif mode_lower in ("binary", "b"):
-            self.mode = "b"
-        else:
-            raise ValueError(
-                f"Invalid '{mode}'. Expected 'text', 't', 'binary', or 'b'."
-            )
+        self.file: Optional[IO] = None
 
-        self._file: Optional[IO] = None
+        if self.expected_md5:
+            self.validate_md5(expected_md5)
 
     def __enter__(self) -> IO:
         """
@@ -55,18 +63,8 @@ class RatingFile:
         Returns:
             A file-like object opened in the specified mode.
         """
-        # Note: The second argument "data" is assumed to be a subpackage or
-        # directory within the given package where the resource is stored.
-        if self.mode == "t":
-            kwargs = {"encoding": "utf-8"}
-            self._file = importlib.resources.open_text(
-                self.package, "data", self.name, **kwargs
-            )
 
-        if self.mode == "b":
-            self._file = importlib.resources.open_binary(
-                self.package, os.path.join("data", self.name)
-            )
+        self.file = self.open()
 
         if self._file is None:
             raise FileNotFoundError()
@@ -84,3 +82,39 @@ class RatingFile:
         """
         if self._file is not None:
             self._file.close()
+
+    @abstractmethod
+    def open(self):
+        pass
+
+    @abstractmethod
+    def validate_md5(self, expected_md5):
+        pass
+
+class ModuleTextFile(ModuleFile):
+    def open(self, **kwargs):
+        return importlib.resources.open_text(
+                self.package, path, encoding="utf-8", **kwargs
+            )
+
+    def open_as_binary(self):
+        return importlib.resources.open_binary(
+                package, path
+            )
+
+    def validate_md5(self, expected_md5):
+        with self.open_as_binary() as f:
+            if MD5Checker(file) != self.expected_md5:
+                raise RuntimeError("")
+
+
+class ModuleBinaryFile(ModuleFile):
+    def open(self):
+        return importlib.resources.open_binary(
+                package, path
+            )
+
+    def validate_md5(self, expected_md5):
+        with self as f:
+            if MD5Checker(file) != self.expected_md5:
+                raise RuntimeError("")

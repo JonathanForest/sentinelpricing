@@ -6,7 +6,7 @@ from .pricetest import PriceTest
 from .quote import Quote
 from .quoteset import QuoteSet
 from .rate import Rate
-from .ratingfile import RatingFile
+from .modulefile import ModuleFile
 from .step import Step
 from .testcase import TestCase
 from .testsuite import TestSuite
@@ -20,7 +20,7 @@ __all__ = [
     "Quote",
     "QuoteSet",
     "Rate",
-    "RatingFile",
+    "ModuleFile",
     "Step",
     "TestCase",
     "TestSuite",
