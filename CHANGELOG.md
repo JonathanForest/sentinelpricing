@@ -7,14 +7,12 @@ and adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Unreleased] - 2025-03-07
+## [Unreleased] - 2025-03-12
 ### Added
 - CHANGELOG.md
-- Modified by argument in quoteset aggregate functions to accept a function to
-	both get and group by dict key.
+- Modified by argument in quoteset aggregate functions to accept a function to both get and group by dict key.
 - Implemented PriceTest class, allowing for price testing implementations
-- ModuleFile now checks MD5 hash of source file (if provided) and raises an 
-	___ error if not equal.
+- ModuleFile now checks MD5 hash of source file (if provided) and raises an error if not equal.
 
 ## [0.1.0] - 2025-02-24
 ### Added
